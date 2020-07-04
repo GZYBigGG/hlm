@@ -23,7 +23,33 @@
     </div>
     <button type="submit" class="btn btn-default">查找</button>
     <a class ="btn btn-default" th:href="@{/all}">查找全部</a>
+    <a href="#demo" data-toggle="collapse">快捷查找</a>
   </form>
+<div id="demo" class="collapse">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      请选择查找内容
+    </div>
+    <div class="panel-body">
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox1" value="option1"> 所有女性
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox2" value="option2"> 所有男性
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox3" value="option3"> 金陵十二钗
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox3" value="option4"> 金陵十二钗副册
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox3" value="option4"> 贾府
+      </label>
+      <a class ="btn btn-info">查询</a>
+    </div>
+  </div>
+</div>
 
 <script type="text/javascript">
 $(function(){
@@ -31,15 +57,17 @@ $(function(){
 	var name2 = document.getElementById("name2").value;
 	//"/node/reload?name1="+name1+"&name2="+name2
 			//"Neo4jSon.json"
-          d3.json("/node?name1="+name1+"&name2="+name2, function(json) {
+ d3.json("/node?name1="+name1+"&name2="+name2, function(json) {
             console.log(json);
+
+            
             
             function GroupExplorer(wrapper,config){
                 var defaultConfig={
                     data:{"nodes":[],"links":[]},
                     width:window.innerWidth,
                     height:window.innerHeight-30,
-                    distance:100   //两个顶点之间的默认距离设为100
+                    distance:200  //两个顶点之间的默认距离设为100
                 };
                 //console.log(defaultConfig.data.nodes);
                 
@@ -67,7 +95,7 @@ $(function(){
                             _this.zoomed();
                         });
                 //定义图谱
-                this.vis = d3.select("body").append("svg:svg")
+                this.vis = d3.select("body").append("svg")
                         .attr("width", defaultConfig.width)
                         .attr("height", defaultConfig.height)
                         .call(zoom).on("dblclick.zoom", null);
@@ -90,33 +118,34 @@ $(function(){
 
                 //设置箭头属性
                 this.vis.append("svg:defs").selectAll("marker")
-                        .data(["end"])
+                        .data([""])
                         .enter().append("svg:marker")
                         .attr("id","arrow") //	标识的id号
                         .attr('class','arrow')
                         .attr("viewBox", "0 -5 10 10") //坐标系的区域
-                        .attr("refX", 27)   //推测修改这个地方可以实现箭头拖拽
+                        .attr("refX", 50)   //
                         .attr("refY", 0)
                         .attr("markerWidth", 10)
                         .attr("markerHeight", 16)
                         .attr("markerUnits","userSpaceOnUse")
                         .attr("orient", "auto")
-                        .append("svg:path")
-                        .attr("d", "M0,-5L10,0L0,5")
+                        .append("path")
+                        .attr("d", "M 0 -5 L 10 0 L 0 5")
                         .attr('fill','#666')
                         .call(d3.drag());
 
-                this.link = this.vis.selectAll("line.link")
+                this.link = this.vis.selectAll(".forceLine")
                         .data(defaultConfig.data.links)
-                        .enter().append("svg:line")
-                        .attr("class", "link")
+                        .enter().append("line") 
+                        .attr("class", "forceLine")  //link
                         .attr('stroke-width',2) //线的宽度
                         .attr("x1", function(d) { return d.source.x; })
                         .attr("y1", function(d) { return d.source.y; })
                         .attr("x2", function(d) { return d.target.x; })
                         .attr("y2", function(d) { return d.target.y; })
                         .attr("marker-end","url(#arrow)")
-                        .attr('stroke','#999');   //设置颜色#999表示一种颜色
+                        .attr('stroke','#999')   //设置颜色#999表示一种颜色
+
 
                 var dragstart=function(d, i) {
                     console.info(d3.event.subject)
@@ -178,9 +207,9 @@ $(function(){
                 this.node = this.vis.selectAll("g.node")
                         //.data(defaultConfig.data.links)
                         .data(defaultConfig.data.nodes)
-                        .enter().append("svg:g")
+                        .enter().append("g")
                         .attr("class", "node")
-                        .call(_this.nodeDrag)    //绘图
+                        .call(_this.nodeDrag)    //绘图_this.nodeDrag
                         .on('mouseover', function(d) {
                             if (_this.node.mouseoutTimeout) {
                                 clearTimeout(_this.node.mouseoutTimeout);
@@ -213,19 +242,25 @@ $(function(){
                         .attr("class", "circle")
                        //.attr("xlink:href", "images/lindaiyu.png")
                         .attr("xlink:href", function(d){return "images/"+d.image+".png"})
-                        .attr("x", "-20px")
-                        .attr("y", "-30px")
+                        .attr("x", "-40px")
+                        .attr("y", "-40px")
                         .attr("width", "80px")
-                        .attr("height", "80px");
+                        .attr("height", "80px")
+                        
                //节点下方文字
                 this.node.append("svg:text")
                         .attr("class", "nodetext")
                         .attr("dy", "30px")
-                        .attr("x", "20px") //字体的x,y坐标
-                        .attr("y", "50px") //
+                        .attr("x", "4px") //字体的x,y坐标
+                        .attr("y", "30px") //
                         .attr('text-anchor','middle')
                         .attr("font-size",20) //字体大小
                         .text(function(d) { return d.name });
+              // this.node.append('circle')
+              //           .attr("class", "forceCircle")  
+              //           .attr('r',40)
+              //           .attr('cx',function(d){return d.x})
+              //           .attr('cy',function(d){return d.y})  
 
                //边上的文字
                 this.linetext=this.vis.selectAll('.linetext')
@@ -243,6 +278,7 @@ $(function(){
                 this.zoomed=function(){
                     _this.vis.attr("transform", d3.event.transform);
                 };
+
 
 //移动时进行重新调整位置
                 this.tick=function() {

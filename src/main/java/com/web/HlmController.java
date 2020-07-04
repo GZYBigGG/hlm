@@ -22,7 +22,7 @@ public class HlmController {
 	private ToNeo4j tn;
 	public static boolean flag=false;
 	
-	@RequestMapping("/lovess")
+	@RequestMapping("/index")
 	public String show() {
 	
 		return "show";

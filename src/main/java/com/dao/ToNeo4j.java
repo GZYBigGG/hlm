@@ -27,7 +27,8 @@ public class ToNeo4j {
 	Driver driver;		
 	public ToNeo4j() {
 		try {
-			driver = GraphDatabase.driver("bolt://123.56.170.16:7687", AuthTokens.basic("neo4j", "123456"));
+			driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "123456"));
+			//123.56.170.16
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
